@@ -72,3 +72,7 @@ dmypy.json
 
 # ruff
 .ruff_cache/
+
+# shell scripts
+*.sh
+

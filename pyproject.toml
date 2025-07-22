@@ -4,17 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pydeptree"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Python dependency tree analyzer with rich terminal output"
 readme = "README.md"
 requires-python = ">=3.7"
 license = {text = "MIT"}
 keywords = ["dependency", "analysis", "tree", "ast", "development"]
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "Todd Faucheux", email = "tfaucheux@gmail.com"}
 ]
 maintainers = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "Todd Faucheux", email = "tfaucheux@gmail.com"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -48,6 +48,9 @@ dev = [
     "build>=0.10",
     "twine>=4.0",
 ]
+enhanced = [
+    "ruff>=0.1.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/tfaucheux/pydeptree"
@@ -58,6 +61,7 @@ Changelog = "https://github.com/tfaucheux/pydeptree/blob/main/CHANGELOG.md"
 
 [project.scripts]
 pydeptree = "pydeptree.cli:main"
+pydeptree-enhanced = "pydeptree.cli_enhanced:main"
 
 [tool.setuptools]
 package-dir = {"" = "."}
@@ -104,4 +108,13 @@ exclude_lines = [
     "if self.debug:",
     "if __name__ == .__main__.:",
     "raise NotImplementedError",
+]
+
+[dependency-groups]
+dev = [
+    "black>=23.3.0",
+    "mypy>=1.4.1",
+    "pytest>=7.4.4",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.12.4",
 ]
