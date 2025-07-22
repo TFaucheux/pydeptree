@@ -105,7 +105,7 @@ PyDepTree uses Python's built-in AST (Abstract Syntax Tree) module to parse Pyth
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/pydeptree.git
+git clone https://github.com/tfaucheux/pydeptree.git
 cd pydeptree
 
 # Create virtual environment
