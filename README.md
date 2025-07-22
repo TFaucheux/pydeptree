@@ -91,23 +91,47 @@ pydeptree myapp.py --show-code
 pydeptree myapp.py --project-root /path/to/project
 ```
 
-### Example Output
+### Enhanced CLI Example Output
+
+```bash
+python -m pydeptree.cli_enhanced sample_project/main.py --depth 2
+```
 
 ```
-Analyzing dependencies for: /home/user/project/main.py
-Project root: /home/user/project
-Max depth: 2
+╭───────── Analysis Settings ─────────╮
+│ Enhanced Python Dependency Analyzer │
+│                                     │
+│ File: sample_project/main.py        │
+│ Project root: sample_project        │
+│ Max depth: 2                        │
+│ Lint checking: enabled              │
+╰─────────────────────────────────────╯
 
-Dependency tree:
-└── main.py
-    ├── utils/config.py
-    │   ├── utils/validators.py
-    │   └── models/settings.py
-    └── services/api.py
-        ├── utils/http.py
-        └── models/response.py
+Legend:
+📊 Models | 🌐 Services | 🔧 Utils | 🧪 Tests | 🚀 Main | Size | Lines | 
+Imports↓ | E:Errors | W:Warnings
 
-Found 6 files with 8 total dependencies
+╭────────────────── Dependency Tree ──────────────────╮
+│ 🚀 main.py 741B 31L 2↓ W:5                          │
+│ ├── 🌐 services/api.py 2.1KB 71L 5↓ W:13            │
+│ │   ├── 📊 models/response.py 1.4KB 54L 3↓ W:5      │
+│ │   └── 🔧 utils/http.py 1.8KB 55L 3↓ E:2 W:14      │
+│ └── 🔧 utils/config.py 1.4KB 53L 5↓ W:13            │
+│     ├── 📊 models/settings.py 1.1KB 47L 2↓ W:4      │
+│     └── 🔧 utils/validators.py 1.0KB 39L 2↓ E:1 W:3 │
+╰─────────────────────────────────────────────────────╯
+
+                      File Statistics Summary                       
+┏━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓
+┃ Type       ┃ Count ┃ Total Lines ┃ Avg Lines ┃ Errors ┃ Warnings ┃
+┡━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩
+│ 🚀 main    │     1 │          31 │        31 │      - │        5 │
+│ 📊 model   │     2 │         101 │        50 │      - │        9 │
+│ 🌐 service │     1 │          71 │        71 │      - │       13 │
+│ 🔧 utils   │     3 │         147 │        49 │      3 │       30 │
+├────────────┼───────┼─────────────┼───────────┼────────┼──────────┤
+│ Total      │     7 │         350 │        50 │      3 │       57 │
+└────────────┴───────┴─────────────┴───────────┴────────┴──────────┘
 ```
 
 ## Quick Start Examples
