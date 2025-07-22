@@ -7,7 +7,7 @@
 python -m pydeptree.cli_enhanced sample_project/main.py --depth 2
 ```
 
-![Enhanced Output](docs_output_enhanced_basic.svg)
+![Enhanced Output](docs/docs_output_enhanced_basic.svg)
 
 ### With Import Statements
 
@@ -15,7 +15,7 @@ python -m pydeptree.cli_enhanced sample_project/main.py --depth 2
 python -m pydeptree.cli_enhanced sample_project/main.py --depth 3 --show-code
 ```
 
-![Enhanced with Code](docs_output_enhanced_with_code.svg)
+![Enhanced with Code](docs/docs_output_enhanced_with_code.svg)
 
 ### Available Output Formats
 

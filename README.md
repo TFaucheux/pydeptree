@@ -12,7 +12,7 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 <details>
 <summary>📸 Alternative Demo (Click to expand)</summary>
 
-![Enhanced Output](https://raw.githubusercontent.com/TFaucheux/pydeptree/main/docs_output_enhanced_basic.svg)
+![Enhanced Output](https://raw.githubusercontent.com/TFaucheux/pydeptree/main/docs/docs_output_enhanced_basic.svg)
 
 </details>
 
