@@ -18,6 +18,22 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 
 > ✨ **Enhanced CLI Demo**: The screenshot above shows PyDepTree's enhanced features including color-coded file types, file statistics, lint detection, and summary tables.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Quick Start Examples](#quick-start-examples)
+- [Demo and Sample Project](#demo-and-sample-project)
+- [Command Line Options](#command-line-options)
+- [Understanding the Metrics](#understanding-the-metrics)
+- [Requirements Generation](#requirements-generation)
+- [How It Works](#how-it-works)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
 ## Features
 
 ### Core Features
