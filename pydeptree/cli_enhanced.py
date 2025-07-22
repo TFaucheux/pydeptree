@@ -267,34 +267,35 @@ def format_file_label(file_info: FileInfo, project_root: Path) -> Text:
     label.append(f"{icon} ", style=color)
     label.append(str(relative_path), style=color)
     
-    # Add badges
-    badges = []
-    
-    # Size badge
-    if file_info.size < 1024:
-        size_str = f"{file_info.size}B"
-    elif file_info.size < 1024 * 1024:
-        size_str = f"{file_info.size / 1024:.1f}KB"
-    else:
-        size_str = f"{file_info.size / (1024 * 1024):.1f}MB"
-    badges.append(f"[dim]{size_str}[/dim]")
-    
-    # Lines badge
-    badges.append(f"[dim]{file_info.lines}L[/dim]")
-    
-    # Imports badge
-    if file_info.imports > 0:
-        badges.append(f"[cyan]{file_info.imports}↓[/cyan]")
-    
-    # Lint badges
-    if file_info.lint_errors > 0:
-        badges.append(f"[red]E:{file_info.lint_errors}[/red]")
-    if file_info.lint_warnings > 0:
-        badges.append(f"[yellow]W:{file_info.lint_warnings}[/yellow]")
-    
-    if badges:
+    # Add badges with proper Text styling
+    if file_info.size > 0 or file_info.lines > 0 or file_info.imports > 0 or file_info.lint_errors > 0 or file_info.lint_warnings > 0:
         label.append(" ")
-        label.append(" ".join(badges))
+        
+        # Size badge
+        if file_info.size < 1024:
+            size_str = f"{file_info.size}B"
+        elif file_info.size < 1024 * 1024:
+            size_str = f"{file_info.size / 1024:.1f}KB"
+        else:
+            size_str = f"{file_info.size / (1024 * 1024):.1f}MB"
+        label.append(size_str, style="dim")
+        
+        # Lines badge
+        label.append(" ")
+        label.append(f"{file_info.lines}L", style="dim")
+        
+        # Imports badge
+        if file_info.imports > 0:
+            label.append(" ")
+            label.append(f"{file_info.imports}↓", style="cyan")
+        
+        # Lint badges
+        if file_info.lint_errors > 0:
+            label.append(" ")
+            label.append(f"E:{file_info.lint_errors}", style="red")
+        if file_info.lint_warnings > 0:
+            label.append(" ")
+            label.append(f"W:{file_info.lint_warnings}", style="yellow")
     
     return label
 
@@ -327,7 +328,8 @@ def build_rich_tree(file_path: Path, dependencies: Dict[Path, Set[Path]],
             else:
                 dep_info = file_info_cache.get(dep, FileInfo(dep, 0, 0, 0, 0, 0, 'other'))
                 circular_label = format_file_label(dep_info, project_root)
-                circular_label.append(" [dim](circular)[/dim]")
+                circular_label.append(" ")
+                circular_label.append("(circular)", style="dim")
                 current_node.add(circular_label)
     
     return tree
