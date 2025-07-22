@@ -6,13 +6,13 @@
 
 A powerful Python dependency analyzer that visualizes module dependencies in your Python projects as a beautiful tree structure. Built with Rich for colorful terminal output.
 
-![PyDepTree Enhanced Demo](demo.png)
+![PyDepTree Enhanced Demo](https://raw.githubusercontent.com/TFaucheux/pydeptree/main/demo.png)
 
 <!-- Alternative SVG demo if PNG doesn't load -->
 <details>
 <summary>📸 Alternative Demo (Click to expand)</summary>
 
-![Enhanced Output](docs_output_enhanced_basic.svg)
+![Enhanced Output](https://raw.githubusercontent.com/TFaucheux/pydeptree/main/docs_output_enhanced_basic.svg)
 
 </details>
 
