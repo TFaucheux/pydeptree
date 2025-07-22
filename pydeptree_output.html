@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+.r1 {color: #008080; text-decoration-color: #008080; font-weight: bold}
+.r2 {color: #00ff00; text-decoration-color: #00ff00; font-weight: bold}
+.r3 {color: #800080; text-decoration-color: #800080; font-weight: bold}
+.r4 {font-weight: bold}
+body {
+    color: #000000;
+    background-color: #ffffff;
+}
+</style>
+</head>
+<body>
+    <pre style="font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><code style="font-family:inherit">╭───────── Analysis Settings ─────────╮
+│ Enhanced Python Dependency Analyzer │
+│                                     │
+│ File: sample_project/main.py        │
+│ Project root: sample_project        │
+│ Max depth: <span class="r1">3</span>                        │
+│ Lint checking: enabled              │
+╰─────────────────────────────────────╯
+
+Legend:
+📊 Models | 🌐 Services | 🔧 Utils | 🧪 Tests | 🚀 Main | Size | Lines | 
+Imports↓ | <span class="r2">E:E</span>rrors | W:Warnings
+
+
+
+╭────────────────── Dependency Tree ──────────────────╮
+│ 🚀 main.py 741B 31L <span class="r1">2</span>↓ W:<span class="r1">5</span>                          │
+│ ├── 🌐 services/api.py <span class="r1">2.</span>1KB 71L <span class="r1">5</span>↓ W:<span class="r1">13</span>            │
+│ │   ├── 📊 models/response.py <span class="r1">1.</span>4KB 54L <span class="r1">3</span>↓ W:<span class="r1">5</span>      │
+│ │   └── 🔧 utils/http.py <span class="r1">1.</span>8KB 55L <span class="r1">3</span>↓ <span class="r2">E:2</span> W:<span class="r1">14</span>      │
+│ └── 🔧 utils/config.py <span class="r1">1.</span>4KB 53L <span class="r1">5</span>↓ W:<span class="r1">13</span>            │
+│     ├── 📊 models/settings.py <span class="r1">1.</span>1KB 47L <span class="r1">2</span>↓ W:<span class="r1">4</span>      │
+│     └── 🔧 utils/validators.py <span class="r1">1.</span>0KB 39L <span class="r1">2</span>↓ <span class="r2">E:1</span> W:<span class="r1">3</span> │
+╰─────────────────────────────────────────────────────╯
+
+Found <span class="r1">7</span> files with <span class="r1">6</span> total dependencies
+
+
+                      File Statistics Summary                       
+┏━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓
+┃ Type       ┃ Count ┃ Total Lines ┃ Avg Lines ┃ Errors ┃ Warnings ┃
+┡━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩
+│ 🚀 main    │     <span class="r1">1</span> │          <span class="r1">31</span> │        <span class="r1">31</span> │      - │        <span class="r1">5</span> │
+│ 📊 model   │     <span class="r1">2</span> │         <span class="r1">101</span> │        <span class="r1">50</span> │      - │        <span class="r1">9</span> │
+│ 🌐 service │     <span class="r1">1</span> │          <span class="r1">71</span> │        <span class="r1">71</span> │      - │       <span class="r1">13</span> │
+│ 🔧 utils   │     <span class="r1">3</span> │         <span class="r1">147</span> │        <span class="r1">49</span> │      <span class="r1">3</span> │       <span class="r1">30</span> │
+├────────────┼───────┼─────────────┼───────────┼────────┼──────────┤
+│ Total      │     <span class="r1">7</span> │         <span class="r1">350</span> │        <span class="r1">50</span> │      <span class="r1">3</span> │       <span class="r1">57</span> │
+└────────────┴───────┴─────────────┴───────────┴────────┴──────────┘
+
+Lint Issues:
+
+Files with errors:
+  ✗ utils/http.py - <span class="r1">2</span> <span class="r3">error</span><span class="r4">(</span>s<span class="r4">)</span>
+  ✗ utils/validators.py - <span class="r1">1</span> <span class="r3">error</span><span class="r4">(</span>s<span class="r4">)</span>
+
+Files with warnings:
+  ⚠  utils/config.py - <span class="r1">13</span> <span class="r3">warning</span><span class="r4">(</span>s<span class="r4">)</span>
+  ⚠  services/api.py - <span class="r1">13</span> <span class="r3">warning</span><span class="r4">(</span>s<span class="r4">)</span>
+  ⚠  main.py - <span class="r1">5</span> <span class="r3">warning</span><span class="r4">(</span>s<span class="r4">)</span>
+  ⚠  models/response.py - <span class="r1">5</span> <span class="r3">warning</span><span class="r4">(</span>s<span class="r4">)</span>
+  ⚠  models/settings.py - <span class="r1">4</span> <span class="r3">warning</span><span class="r4">(</span>s<span class="r4">)</span>
+
+Import Statements:
+
+main.py:
+     <span class="r1">5</span>: from utils.config import load_config, validate_config
+     <span class="r1">6</span>: from services.api import APIClient, APIError
+
+services/api.py:
+     <span class="r1">8</span>: from utils.http import HTTPClient, HTTPError
+     <span class="r1">9</span>: from models.response import APIResponse, ErrorResponse
+
+utils/config.py:
+     <span class="r1">8</span>: from utils.validators import validate_url, validate_api_key
+     <span class="r1">9</span>: from models.settings import Settings, APISettings
+
+
+</code></pre>
+</body>
+</html>
