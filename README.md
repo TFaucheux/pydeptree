@@ -6,7 +6,17 @@
 
 A powerful Python dependency analyzer that visualizes module dependencies in your Python projects as a beautiful tree structure. Built with Rich for colorful terminal output.
 
-![Demo](demo.png)
+![PyDepTree Enhanced Demo](demo.png)
+
+<!-- Alternative SVG demo if PNG doesn't load -->
+<details>
+<summary>📸 Alternative Demo (Click to expand)</summary>
+
+![Enhanced Output](docs_output_enhanced_basic.svg)
+
+</details>
+
+> ✨ **Enhanced CLI Demo**: The screenshot above shows PyDepTree's enhanced features including color-coded file types, file statistics, lint detection, and summary tables.
 
 ## Features
 
