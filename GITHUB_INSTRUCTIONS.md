@@ -101,6 +101,8 @@ To enable users to install your package with `pipx install pydeptree`, you need 
 6. Click "Add secret"
 
 ### Step 3: Test Build Locally
+1. Run these commands from the pydeptree-package directory 
+2. The root directory of your package where the **pyproject.toml** file is located.
 
 ```bash
 # Install build tools

@@ -148,10 +148,8 @@ twine upload dist/*
 ```
 
 ## Notes
-
-- Want to create your own github repo and/or publish to pypi? (see the following instructions)
-- ![GITHUB_INSTRUCTIONS](GITHUB_INSTRUCTIONS.md)
-- ![PYPI DISTRIBUTION](DISTRIBUTION.md)
+ - [GITHUB INSTRUCTIONS](GITHUB_INSTRUCTIONS.md)
+ - [PYPI INSTRUCTIONS](DISTRIBUTION.md)
 
 ## Contributing
 
