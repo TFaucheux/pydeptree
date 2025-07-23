@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.4] - 2025-01-23
+
+### Fixed
+- **PyPI Image Display**: Updated all image URLs in README to use raw GitHub content URLs
+  - Images now display properly on the PyPI package page
+  - Changed from relative paths (`images/file.png`) to full URLs (`https://raw.githubusercontent.com/tfaucheux/pydeptree/main/images/file.png`)
+
 ## [0.3.3] - 2025-01-23
 
 ### Added
