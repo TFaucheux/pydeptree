@@ -143,6 +143,34 @@ pipx ensurepath
 source ~/.bashrc  # or restart your terminal
 ```
 
+## 📦 Demo Files and Sample Project
+
+If you installed PyDepTree via pip or pipx and want to run the demo scripts, download the demo package:
+
+```bash
+# Download the demos.zip file
+curl -L https://github.com/TFaucheux/pydeptree/raw/main/demos.zip -o demos.zip
+
+# Extract the demos
+unzip demos.zip
+
+# Run the demos
+python demo_basic.py
+python demo_enhanced.py
+python demo_advanced.py
+python demo_run_all.py  # Runs all demos in sequence
+
+# Try PyDepTree on the included sample project
+pydeptree sample_project/main.py
+```
+
+The demos package includes:
+- **demo_basic.py** - Demonstrates basic dependency tree visualization
+- **demo_enhanced.py** - Shows enhanced features with file metrics and lint checking
+- **demo_advanced.py** - Showcases all advanced features including search, git integration, and complexity analysis
+- **demo_run_all.py** - Runs all demos sequentially for a complete overview
+- **sample_project/** - A realistic Python project with intentional code issues for demonstration
+
 Then install PyDepTree:
 ```bash
 pipx install pydeptree
