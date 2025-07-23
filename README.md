@@ -8,19 +8,19 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 
 ## 🎬 See PyDepTree in Action
 
-![PyDepTree Demo](images/pydeptree-demo.gif)
+![PyDepTree Demo](https://raw.githubusercontent.com/tfaucheux/pydeptree/main/images/pydeptree-demo.gif)
 
 <details>
 <summary>📸 View Individual Screenshots</summary>
 
 ### Basic CLI
-![PyDepTree Basic](images/pydeptree.png)
+![PyDepTree Basic](https://raw.githubusercontent.com/tfaucheux/pydeptree/main/images/pydeptree.png)
 
 ### Enhanced CLI with File Metrics
-![PyDepTree Enhanced](images/pydeptree-enhanced.png)
+![PyDepTree Enhanced](https://raw.githubusercontent.com/tfaucheux/pydeptree/main/images/pydeptree-enhanced.png)
 
 ### Advanced CLI with All Features
-![PyDepTree Advanced](images/pydeptree-advanced.png)
+![PyDepTree Advanced](https://raw.githubusercontent.com/tfaucheux/pydeptree/main/images/pydeptree-advanced.png)
 
 </details>
 
@@ -165,22 +165,6 @@ pydeptree myapp.py --show-code
 # Specify a custom project root
 pydeptree myapp.py --project-root /path/to/project
 ```
-
-### Enhanced CLI Example Output
-
-```bash
-python -m pydeptree.cli_enhanced sample_project/main.py --depth 2
-```
-
-![PyDepTree Enhanced Demo](https://raw.githubusercontent.com/TFaucheux/pydeptree/main/demo_enhanced.png)
-
-### Advanced CLI Example Output
-
-```bash
-python -m pydeptree.cli_advanced sample_project/main.py --depth 2 --search "validate" --search-type function
-```
-
-![PyDepTree Enhanced Demo](https://raw.githubusercontent.com/TFaucheux/pydeptree/main/demo_advanced.png)
 
 ## Quick Start Examples
 
@@ -504,22 +488,6 @@ mypy pydeptree
 ```
 
 **Note**: The `sample_project/` directory contains intentional linting errors for demonstration purposes. When running linting tools on the entire project, you'll see these demo errors alongside any real issues in the main codebase.
-
-### Building for Distribution
-
-```bash
-# Install build tools
-pip install build twine
-
-# Build distribution packages
-python -m build
-
-# Upload to TestPyPI (for testing)
-twine upload --repository testpypi dist/*
-
-# Upload to PyPI (for release)
-twine upload dist/*
-```
 
 ## Contributing
 
