@@ -1124,8 +1124,9 @@ def display_summary_table(file_stats: Dict[str, FileInfo], show_search: bool = F
             
             icon = get_file_type_icon(file_type)
             
+            # Use text-only labels for table to avoid emoji width issues
             row = [
-                f"{icon} {file_type}",
+                file_type.capitalize(),
                 str(stats['count']),
                 str(stats['total_lines']),
                 str(avg_lines),
