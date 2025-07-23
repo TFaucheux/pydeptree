@@ -35,7 +35,7 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 | Configurable Depth | ✅ | ✅ | ✅ |
 | Import Preview | ✅ | ✅ | ✅ |
 | Flexible Import Display | ❌ | ❌ | ✅ (inline/below/both) |
-| File Type Colors | ❌ | ✅ | ✅ |
+| File Type Colors | ❌ | ✅ | ✅ (+ Config) |
 | File Metrics | ❌ | ✅ | ✅ |
 | Lint Checking | ❌ | ✅ | ✅ |
 | Summary Tables | ❌ | ✅ | ✅ |
@@ -76,7 +76,7 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 - 🔄 **Circular Dependency Detection**: Identifies and handles circular imports
 
 ### Enhanced Features ✨
-- 🎨 **Color-coded File Types**: Models (📊), Services (🌐), Utils (🔧), Tests (🧪), Main (🚀)
+- 🎨 **Color-coded File Types**: Models (📊), Services (🌐), Utils (🔧), Tests (🧪), Main (🚀), Config (⚙️)
 - 📈 **File Statistics**: Size, line count, and import count badges for each file
 - 🔍 **Lint Integration**: Automatic error/warning detection using ruff (when available)
 - 📊 **Summary Tables**: Aggregate statistics by file type with quality metrics
@@ -90,6 +90,7 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 - 🏗️ **Code Structure Metrics**: Function and class counts per file
 - 🔄 **Git Integration**: Shows file modification status in version control
 - 📄 **Requirements Generation**: Automatically generate requirements.txt from detected dependencies
+- ⚙️ **Config File Detection** (v0.3.12+): Automatically detects and categorizes Python configuration files
 
 ## Installation
 
@@ -398,6 +399,17 @@ All enhanced options plus:
 - **TODOs**: Total TODO comments found
 - **Errors/Warnings**: Lint issue counts
 - **Matches**: Search result counts (when searching)
+
+### File Type Detection
+PyDepTree automatically categorizes Python files by analyzing their paths and names:
+
+- **📊 Models**: Files in `/models/` directories or containing 'model' in the name
+- **🌐 Services**: Files in `/services/` directories or containing 'service', 'api', 'client' in the name  
+- **🔧 Utils**: Files in `/utils/` directories or containing 'util', 'helper' in the name
+- **🧪 Tests**: Files in `/tests/` directories or starting with 'test_'
+- **🚀 Main**: Files named 'main.py' or '__main__.py'
+- **⚙️ Config**: Files like 'config.py', 'settings.py', 'env.py', or in `/config/` directories
+- **📄 Other**: Files that don't match the above patterns
 
 ## Requirements Generation
 
