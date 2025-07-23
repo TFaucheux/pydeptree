@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.8] - 2025-01-23
+
+### Fixed
+- **Advanced CLI --show-code Option**: Resolved Click option conflict that prevented `--show-code=inline` from working
+  - Fixed parameter mapping issue that caused "Option '--show-code' does not take a value" error
+  - All show-code modes now work correctly: inline, below, both
+  - Maintains backward compatibility with existing usage patterns
+
 ## [0.3.7] - 2025-01-23
 
 ### Fixed
