@@ -1199,10 +1199,10 @@ def display_todos_summary(file_stats: Dict[str, FileInfo]):
 @click.option('-d', '--depth', default=2, help='Maximum depth to traverse')
 @click.option('-r', '--project-root', type=click.Path(exists=True, path_type=Path), 
               help='Project root directory (defaults to file\'s parent)')
-@click.option('-c', '--show-code', 
+@click.option('-c', '--show-code', 'show_code_param',
               type=click.Choice(['below', 'inline', 'both'], case_sensitive=False),
-              default=None, flag_value='below',
-              help='Display import statements (below: after tree, inline: in tree, both: in both places)')
+              default=None,
+              help='Display import statements: below (after tree), inline (in tree), both (in both places)')
 @click.option('-l', '--check-lint/--no-check-lint', default=True, 
               help='Enable/disable lint checking')
 @click.option('-s', '--show-stats/--no-show-stats', default=True, 
@@ -1228,12 +1228,15 @@ def display_todos_summary(file_stats: Dict[str, FileInfo]):
               help='Show detailed dependency analysis like johnnydep')
 @click.option('--dep-depth', default=2, type=int,
               help='Maximum depth for dependency analysis (default: 2)')
-def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code: Optional[str], 
+def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code_param: Optional[str], 
         check_lint: bool, show_stats: bool, search: Optional[str], search_type: str,
         show_todos: bool, check_git: bool, show_metrics: bool,
         generate_requirements: bool, requirements_output: Optional[Path], no_versions: bool,
         no_interactive: bool, analyze_deps: bool, dep_depth: int):
     """Advanced Python Dependency Tree Analyzer with search, complexity, and more"""
+    
+    # Map parameter to show_code for consistency
+    show_code = show_code_param
     
     # Set project root
     if project_root is None:
