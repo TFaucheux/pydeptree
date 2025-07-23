@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.9] - 2025-01-23
+
+### Enhanced
+- **Simplified Installation**: Moved `ruff` from optional to main dependencies
+  - Lint checking now works out of the box with `pip install pydeptree` or `pipx install pydeptree`
+  - Removed confusing `[enhanced]` installation instructions from README
+  - All enhanced and advanced CLI features now work immediately after installation
+  - No more silent failures when lint checking is expected but ruff is missing
+
 ## [0.3.8] - 2025-01-23
 
 ### Fixed

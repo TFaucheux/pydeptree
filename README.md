@@ -155,16 +155,6 @@ cd pydeptree
 pip install -e .
 ```
 
-### Enhanced Features Installation
-
-For lint checking capabilities, install with enhanced dependencies:
-
-```bash
-pip install -e ".[enhanced]"
-```
-
-This installs `ruff` for code quality analysis.
-
 ## Usage
 
 ### Basic Usage
