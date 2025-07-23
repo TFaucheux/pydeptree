@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.17] - 2025-07-23
 
+## [0.3.17] - 2025-07-23
+
 ### Changed
 - Reorganized demo files into a dedicated `demos/` directory for cleaner project structure
 - Updated `demos.zip` to include the new directory structure
