@@ -22,6 +22,9 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 ### Advanced CLI with All Features
 ![PyDepTree Advanced](https://raw.githubusercontent.com/tfaucheux/pydeptree/main/images/pydeptree-advanced.png)
 
+### Advanced CLI with Dependency Analysis
+![PyDepTree Requirements](https://raw.githubusercontent.com/tfaucheux/pydeptree/main/images/pydeptree-analyze-deps.png)
+
 </details>
 
 ## 🚀 Three Powerful Versions

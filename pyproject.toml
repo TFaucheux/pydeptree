@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pydeptree"
 version = "0.3.17"
-description = "A Python dependency tree analyzer with rich terminal output"
+description = "A Python dependency tree analyzer with rich terminal output, and code quality features."
 readme = "README.md"
 requires-python = ">=3.7"
 license = {text = "MIT"}
-keywords = ["dependency", "analysis", "tree", "ast", "development"]
+keywords = ["dependency", "analysis", "tree", "ast", "development", "python", "import", "dependency-tree", "dependency-graph", "module-analysis", "code-analysis", "static-analysis", "visualization", "cli", "terminal", "deptree", "requirements"]
 authors = [
     {name = "Todd Faucheux", email = "tfaucheux@gmail.com"}
 ]
