@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.14] - 2025-07-23
 
+## [0.3.14] - 2025-07-23
+
 ### Fixed
 - Fixed distribution packaging to include demo files and sample_project directory
 - Updated MANIFEST.in to ensure demo_*.py files and sample_project/ are included in PyPI distribution
