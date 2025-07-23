@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.14] - 2025-07-23
+## [0.3.15] - 2025-07-23
+
+### Added
+- Added demos.zip file for easy access to demo scripts and sample project
+- Added instructions in README for downloading demos after pip/pipx installation
+
+### Changed
+- Improved demo accessibility for users who install via package managers
 
 ## [0.3.14] - 2025-07-23
 
