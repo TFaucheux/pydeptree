@@ -6,7 +6,47 @@
 
 A powerful Python dependency analyzer that visualizes module dependencies in your Python projects as a beautiful tree structure. Built with Rich for colorful terminal output.
 
-![PyDepTree Enhanced Demo](https://raw.githubusercontent.com/TFaucheux/pydeptree/main/demo.png)
+## 🎬 See PyDepTree in Action
+
+![PyDepTree Demo](images/pydeptree-demo.gif)
+
+<details>
+<summary>📸 View Individual Screenshots</summary>
+
+### Basic CLI
+![PyDepTree Basic](images/pydeptree.png)
+
+### Enhanced CLI with File Metrics
+![PyDepTree Enhanced](images/pydeptree-enhanced.png)
+
+### Advanced CLI with All Features
+![PyDepTree Advanced](images/pydeptree-advanced.png)
+
+</details>
+
+## 🚀 Three Powerful Versions
+
+<details>
+<summary>Compare Features Across Versions</summary>
+
+| Feature | Basic CLI | Enhanced CLI | Advanced CLI |
+|---------|-----------|--------------|--------------|
+| Dependency Tree | ✅ | ✅ | ✅ |
+| Configurable Depth | ✅ | ✅ | ✅ |
+| Import Preview | ✅ | ✅ | ✅ |
+| Flexible Import Display | ❌ | ❌ | ✅ (inline/below/both) |
+| File Type Colors | ❌ | ✅ | ✅ |
+| File Metrics | ❌ | ✅ | ✅ |
+| Lint Checking | ❌ | ✅ | ✅ |
+| Summary Tables | ❌ | ✅ | ✅ |
+| Search/Grep | ❌ | ❌ | ✅ |
+| Complexity Analysis | ❌ | ❌ | ✅ |
+| TODO Detection | ❌ | ❌ | ✅ |
+| Git Integration | ❌ | ❌ | ✅ |
+| Requirements.txt Gen | ❌ | ❌ | ✅ |
+| Dependency Analysis | ❌ | ❌ | ✅ |
+
+</details>
 
 ## Table of Contents
 
@@ -45,6 +85,7 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 ### Advanced Features 🚀 (v0.3.0+)
 - 🔎 **Search/Grep Integration**: Search for classes, functions, imports, or any text pattern
 - 📐 **Complexity Metrics**: Cyclomatic complexity analysis with visual indicators
+- 📍 **Flexible Import Display**: Show imports inline in tree, below tree, or both locations
 - 📌 **TODO/FIXME Detection**: Automatically finds and displays TODO comments
 - 🏗️ **Code Structure Metrics**: Function and class counts per file
 - 🔄 **Git Integration**: Shows file modification status in version control
@@ -204,9 +245,6 @@ pydeptree-advanced myapp.py --analyze-deps --dep-depth 3
 ```bash
 pydeptree-advanced sample_project/main.py --depth 2
 ```
-
-![Advanced Output](docs/advanced_output_advanced_basic.svg)
-
 *Shows complexity metrics (C:4), function/class counts [0c/1f], lint warnings (W:5), file statistics, and comprehensive analysis with color-coded file types.*
 
 ### Requirements Generation with Safety Features
@@ -214,10 +252,44 @@ pydeptree-advanced sample_project/main.py --depth 2
 ```bash
 pydeptree-advanced sample_project/main.py --generate-requirements --no-interactive
 ```
-
-![Requirements Generation](docs/advanced_output_advanced_requirements_preview.svg)
-
 *Demonstrates the safe requirements.txt generation feature with automatic backup protection and comprehensive dependency analysis.*
+
+### Import Statement Display Options
+
+The `--show-code` flag offers flexible ways to display import statements:
+
+#### Inline Display (`--show-code=inline`)
+Shows import statements directly in the dependency tree:
+
+```bash
+pydeptree-advanced myapp.py --show-code=inline
+```
+
+Example output:
+```
+🚀 main.py
+├── 🌐 services/api.py
+│   ├── 📊 models/response.py
+│   ├──   └─ from models.response import APIResponse, ErrorResponse
+│   └── 🔧 utils/http.py
+└──   └─ from utils.http import HTTPClient, HTTPError
+```
+
+#### Below Display (`--show-code=below`)
+Traditional display showing imports after the tree (default):
+
+```bash
+pydeptree-advanced myapp.py --show-code=below
+# or simply:
+pydeptree-advanced myapp.py --show-code
+```
+
+#### Both Locations (`--show-code=both`)
+Displays imports both inline and at the bottom:
+
+```bash
+pydeptree-advanced myapp.py --show-code=both
+```
 
 ### Testing the Enhanced Features
 ```bash
@@ -267,6 +339,10 @@ All basic options plus:
 
 ### Advanced CLI (`pydeptree-advanced`)
 All enhanced options plus:
+- `-c, --show-code [below|inline|both]`: Display import statements with flexible positioning
+  - `below`: Show imports after the tree (default, backward compatible)
+  - `inline`: Show imports directly in the tree structure
+  - `both`: Show imports in both locations
 - `-S, --search TEXT`: Search for text/pattern in files
 - `--search-type [text|class|function|import]`: Type of search to perform (default: text)
 - `--show-todos / --no-show-todos`: Show/hide TODO comments (default: enabled)

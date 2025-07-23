@@ -890,7 +890,7 @@ def display_package_dependency_tree(package_tree: Dict[str, Dict], console: Cons
 def build_dependency_tree(file_path: Path, project_root: Path, depth: int, 
                          check_lint: bool = True, search_pattern: Optional[str] = None,
                          search_type: str = 'text', check_git: bool = True,
-                         show_metrics: bool = True) -> Tuple[Tree, Dict[str, FileInfo], int]:
+                         show_metrics: bool = True, show_imports_inline: bool = False) -> Tuple[Tree, Dict[str, FileInfo], int]:
     """Build a dependency tree for a Python file"""
     seen = set()
     file_stats = {}
@@ -940,6 +940,29 @@ def build_dependency_tree(file_path: Path, project_root: Path, depth: int,
                     # Add to tree
                     label = format_file_label(file_info, project_root, show_metrics)
                     child_tree = parent_tree.add(label)
+                    
+                    # Add imports inline if requested
+                    if show_imports_inline:
+                        # Show the actual import statements that reference this file
+                        try:
+                            with open(current_file, 'r', encoding='utf-8') as f:
+                                lines = f.readlines()
+                                
+                            # Find import lines that match this dependency
+                            for i, line in enumerate(lines, 1):
+                                line = line.strip()
+                                if (line.startswith('import ') or line.startswith('from ')) and import_name in line:
+                                    import_label = Text()
+                                    import_label.append("  └─ ", style="dim")
+                                    import_label.append(line, style="bright_cyan")
+                                    parent_tree.add(import_label, guide_style="dim")
+                                    break  # Only show first matching import
+                        except Exception:
+                            # Fallback to simple import name
+                            import_label = Text()
+                            import_label.append("  └─ ", style="dim")
+                            import_label.append(f"import {import_name}", style="bright_cyan")
+                            parent_tree.add(import_label, guide_style="dim")
                     
                     # Add TODOs if present and no search
                     if file_info.todos and not search_pattern:
@@ -1176,7 +1199,10 @@ def display_todos_summary(file_stats: Dict[str, FileInfo]):
 @click.option('-d', '--depth', default=2, help='Maximum depth to traverse')
 @click.option('-r', '--project-root', type=click.Path(exists=True, path_type=Path), 
               help='Project root directory (defaults to file\'s parent)')
-@click.option('-c', '--show-code', is_flag=True, help='Display import statements')
+@click.option('-c', '--show-code', 
+              type=click.Choice(['below', 'inline', 'both'], case_sensitive=False),
+              default=None, flag_value='below',
+              help='Display import statements (below: after tree, inline: in tree, both: in both places)')
 @click.option('-l', '--check-lint/--no-check-lint', default=True, 
               help='Enable/disable lint checking')
 @click.option('-s', '--show-stats/--no-show-stats', default=True, 
@@ -1202,7 +1228,7 @@ def display_todos_summary(file_stats: Dict[str, FileInfo]):
               help='Show detailed dependency analysis like johnnydep')
 @click.option('--dep-depth', default=2, type=int,
               help='Maximum depth for dependency analysis (default: 2)')
-def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code: bool, 
+def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code: Optional[str], 
         check_lint: bool, show_stats: bool, search: Optional[str], search_type: str,
         show_todos: bool, check_git: bool, show_metrics: bool,
         generate_requirements: bool, requirements_output: Optional[Path], no_versions: bool,
@@ -1259,7 +1285,8 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code: bo
         task = progress.add_task("Building dependency tree...", total=None)
         tree, file_stats, total_files = build_dependency_tree(
             file_path, project_root, depth, check_lint, 
-            search, search_type, check_git, show_metrics
+            search, search_type, check_git, show_metrics, 
+            show_imports_inline=(show_code in ['inline', 'both'])
         )
         progress.update(task, completed=True)
     
@@ -1293,8 +1320,8 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code: bo
         else:
             console.print(f"\n[bold red]No matches found for '{search}'[/bold red]")
     
-    # Display import statements if requested
-    if show_code:
+    # Display import statements at bottom if requested
+    if show_code in ['below', 'both']:
         console.print("\n[bold]Import Statements:[/bold]")
         for file_path_str, file_info in list(file_stats.items())[:10]:
             if file_info.imports > 0:
@@ -1309,11 +1336,8 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code: bo
                 except Exception:
                     console.print("  [red]Error reading file[/red]")
     
-    # Generate requirements.txt if requested
-    if generate_requirements:
-        console.print("\n[bold]Generating Requirements File...[/bold]")
-        
-        # Extract external dependencies
+    # Extract external dependencies if needed for either requirements or analysis
+    if generate_requirements or analyze_deps:
         external_deps = extract_external_dependencies(file_stats, project_root)
         
         if external_deps:
@@ -1342,8 +1366,8 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code: bo
                 
                 # Display the dependency tree
                 display_package_dependency_tree(package_tree, console)
-            else:
-                # Show simple table
+            elif generate_requirements:
+                # Show simple table only if generating requirements
                 deps_table = Table(show_header=True, header_style="bold cyan")
                 deps_table.add_column("Package", style="cyan")
                 deps_table.add_column("Version", style="green")
@@ -1367,25 +1391,30 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code: bo
                 
                 console.print(deps_table)
             
-            # Generate content
-            content = generate_requirements_content(
-                external_deps, 
-                include_versions=not no_versions,
-                add_comments=True
-            )
-            
-            # Write file
-            output_file = write_requirements_file(content, requirements_output, project_root, not no_interactive)
-            
-            console.print(f"\n[green]✓[/green] Requirements file written to: [cyan]{output_file}[/cyan]")
-            
-            # Show preview
-            console.print("\n[bold]Preview:[/bold]")
-            preview_lines = content.split('\n')[:10]
-            for line in preview_lines:
-                console.print(f"  {line}")
-            if len(content.split('\n')) > 10:
-                console.print(f"  ... and {len(content.split('\n')) - 10} more lines")
+            # Generate requirements file if requested
+            if generate_requirements:
+                console.print("\n[bold]Generating Requirements File...[/bold]")
+                
+                # Generate content
+                content = generate_requirements_content(
+                    external_deps, 
+                    include_versions=not no_versions,
+                    add_comments=True
+                )
+                
+                # Write file
+                output_file = write_requirements_file(content, requirements_output, project_root, not no_interactive)
+                
+                if output_file:
+                    console.print(f"\n[green]✓[/green] Requirements file written to: [cyan]{output_file}[/cyan]")
+                    
+                    # Show preview
+                    console.print("\n[bold]Preview:[/bold]")
+                    preview_lines = content.split('\n')[:10]
+                    for line in preview_lines:
+                        console.print(f"  {line}")
+                    if len(content.split('\n')) > 10:
+                        console.print(f"  ... and {len(content.split('\n')) - 10} more lines")
         else:
             console.print("\n[yellow]No external dependencies found.[/yellow]")
             console.print("All imports appear to be from the standard library or internal modules.")

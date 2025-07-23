@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="pydeptree",
-    version="0.3.2",
+    version="0.3.3",
     author="Todd Faucheux",
     author_email="tfaucheux@gmail.com",
     description="A Python dependency tree analyzer with rich output",

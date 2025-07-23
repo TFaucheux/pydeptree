@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2025-01-23
+
+### Added
+- **Flexible Import Display**: Enhanced `--show-code` with three display modes
+  - `--show-code=inline`: Shows import statements directly in the dependency tree
+  - `--show-code=below`: Shows imports after the tree (default, backward compatible)
+  - `--show-code=both`: Shows imports in both locations
+  - Displays actual import statements from source code with syntax highlighting
+- **Enhanced GIF Generator**: Improved animated demo generation
+  - Support for 4th image (Requirements Generation demo)
+  - Configurable width/height parameters (`--width`, `--height`)
+  - Adjustable frame duration (`--duration`)
+  - Smart image resizing with aspect ratio preservation
+
+### Fixed
+- **--analyze-deps Independence**: Fixed issue where `--analyze-deps` required `--generate-requirements`
+  - Can now use dependency analysis without generating requirements.txt files
+  - Maintains backward compatibility with combined usage
+
+### Enhanced
+- **README Documentation**: Comprehensive documentation for new import display features
+- **Feature Comparison Table**: Updated to show flexible import display capabilities
+- **Visual Examples**: Added examples showing inline import display in trees
+
 ## [0.3.2] - 2025-01-22
 
 ### Added

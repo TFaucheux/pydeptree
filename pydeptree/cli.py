@@ -210,5 +210,8 @@ def main(file_path: Path, depth: int, project_root: Path, show_code: bool):
                 console.print()
 
 
+# Create CLI alias for entry point
+cli = main
+
 if __name__ == '__main__':
     main()
