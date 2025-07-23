@@ -239,8 +239,12 @@ def run_ruff_check(file_path: Path) -> Tuple[int, int]:
         if result.stdout:
             import json
             issues = json.loads(result.stdout)
-            errors = sum(1 for issue in issues if issue.get('type') == 'error' or 'E' in issue.get('code', ''))
-            warnings = len(issues) - errors
+            # Ruff codes: E = pycodestyle errors, W = pycodestyle warnings, F = pyflakes, etc.
+            errors = sum(1 for issue in issues if issue.get('code', '').startswith('E'))
+            warnings = sum(1 for issue in issues if issue.get('code', '').startswith('W'))
+            # All other codes (F, I, B, etc.) are treated as warnings
+            other_issues = len(issues) - errors - warnings
+            warnings += other_issues
             return errors, warnings
     except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
         pass
