@@ -61,6 +61,21 @@ class FileInfo:
 def detect_file_type(file_path: Path) -> str:
     """Detect the type of Python file based on path and content"""
     path_str = str(file_path).lower()
+    filename = file_path.name.lower()
+    
+    # Check for config files first (highest priority)
+    config_patterns = [
+        'config.py', 'settings.py', 'configuration.py', 'env.py', 'environment.py',
+        'constants.py', 'defaults.py', 'local_settings.py', 'dev_settings.py',
+        'prod_settings.py', 'test_settings.py'
+    ]
+    
+    config_keywords = ['config', 'setting', 'configuration', 'environment', 'env']
+    
+    if (filename in config_patterns or 
+        any(keyword in filename for keyword in config_keywords) or
+        '/config/' in path_str or '/configs/' in path_str or '/settings/' in path_str):
+        return 'config'
     
     # Check by directory
     if '/models/' in path_str or '/model/' in path_str:
@@ -85,6 +100,7 @@ def get_file_type_color(file_type: str) -> str:
         'utils': 'yellow',
         'test': 'magenta',
         'main': 'red',
+        'config': 'bright_blue',
         'other': 'white'
     }
     return colors.get(file_type, 'white')
@@ -98,6 +114,7 @@ def get_file_type_icon(file_type: str) -> str:
         'utils': '🔧',
         'test': '🧪',
         'main': '🚀',
+        'config': '⚙️',
         'other': '📄'
     }
     return icons.get(file_type, '📄')
@@ -1084,7 +1101,7 @@ def display_summary_table(file_stats: Dict[str, FileInfo], show_search: bool = F
         table.add_column("Matches", justify="right", style="magenta")
     
     # Sort by type
-    type_order = ['main', 'model', 'service', 'utils', 'test', 'other']
+    type_order = ['main', 'model', 'service', 'utils', 'config', 'test', 'other']
     
     # Add rows
     total_stats = {
@@ -1276,7 +1293,7 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code_par
     
     # Display legend
     legend_items = [
-        "📊 Models", "🌐 Services", "🔧 Utils", "🧪 Tests", "🚀 Main"
+        "📊 Models", "🌐 Services", "🔧 Utils", "🧪 Tests", "🚀 Main", "⚙️ Config"
     ]
     
     if show_metrics:

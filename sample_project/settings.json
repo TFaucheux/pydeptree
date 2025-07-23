@@ -1,0 +1,30 @@
+{
+  "api": {
+    "base_url": "https://api.example.com",
+    "timeout": 30,
+    "retries": 3,
+    "rate_limit": {
+      "requests_per_minute": 60,
+      "burst_limit": 10
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "ttl": 3600,
+    "max_size": 1000,
+    "backend": "redis"
+  },
+  "security": {
+    "api_key_header": "X-API-Key",
+    "cors_origins": ["http://localhost:3000", "https://example.com"],
+    "rate_limiting": true
+  },
+  "monitoring": {
+    "metrics_enabled": true,
+    "health_check_interval": 60,
+    "alerts": {
+      "email": "admin@example.com",
+      "slack_webhook": "https://hooks.slack.com/services/..."
+    }
+  }
+}

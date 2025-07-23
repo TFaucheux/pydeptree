@@ -1,0 +1,26 @@
+# Application Configuration
+app:
+  name: "PyDepTree Sample Project"
+  version: "1.0.0"
+  debug: true
+  port: 8080
+
+database:
+  host: "localhost"
+  port: 5432
+  name: "sample_db"
+  username: "user"
+  password: "secret"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  handlers:
+    - type: "console"
+    - type: "file"
+      filename: "app.log"
+
+features:
+  enable_metrics: true
+  enable_analytics: false
+  max_connections: 100
