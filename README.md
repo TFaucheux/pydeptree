@@ -101,6 +101,55 @@ pip install pydeptree
 
 ### Using pipx (recommended)
 
+`pipx` installs CLI tools in isolated environments, preventing dependency conflicts.
+
+#### If you already have pipx:
+```bash
+pipx install pydeptree
+```
+
+#### If you need to install pipx:
+
+**macOS:**
+
+```bash
+# Option 1: Using Homebrew (recommended)
+brew install pipx
+
+# Option 2: Using pip
+pip install pipx
+pipx ensurepath
+source ~/.zshrc  # or restart your terminal
+```
+
+**macOS:** (via brew)
+
+```bash
+# Option 2: Using Homebrew (directly)
+brew install pydeptree
+```
+
+**Windows:**
+
+```bash
+# Using pip
+pip install pipx
+pipx ensurepath
+# Restart your command prompt/PowerShell
+```
+
+**Linux:**
+```bash
+# Ubuntu/Debian
+sudo apt install pipx
+
+# Or using pip
+pip install pipx
+pipx ensurepath
+source ~/.bashrc  # or restart your terminal
+```
+
+Then install PyDepTree:
 ```bash
 pipx install pydeptree
 ```

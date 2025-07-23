@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.6] - 2025-01-23
+
+### Enhanced
+- **Installation Documentation**: Added comprehensive pipx installation instructions
+  - Platform-specific instructions for macOS, Windows, and Linux
+  - Multiple installation methods (Homebrew, pip, package managers)
+  - Clear explanation of pipx benefits (isolated environments)
+  - Step-by-step guidance from installation to usage
+
 ## [0.3.5] - 2025-01-23
 
 ### Fixed
