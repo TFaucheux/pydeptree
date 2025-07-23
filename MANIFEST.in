@@ -2,7 +2,6 @@ include LICENSE
 include README.md
 include CHANGELOG.md
 include pyproject.toml
-include demo_*.py
 recursive-include sample_project *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
