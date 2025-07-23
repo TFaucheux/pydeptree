@@ -49,7 +49,7 @@ def main():
         "Running original PyDepTree with depth=2"
     )
     
-    input("\n⏸  Press Enter to continue to enhanced version...")
+    time.sleep(2)  # Brief pause instead of waiting for input
     
     # Demo 2: Enhanced with all features
     print_header("Demo 2: Enhanced PyDepTree with All Features")
@@ -58,7 +58,7 @@ def main():
         "Running enhanced PyDepTree with file colors, lint checking, and statistics"
     )
     
-    input("\n⏸  Press Enter to see more features...")
+    time.sleep(2)  # Brief pause instead of waiting for input
     
     # Demo 3: Show import statements
     print_header("Demo 3: Display Import Statements")
@@ -67,7 +67,7 @@ def main():
         "Showing actual import statements from files"
     )
     
-    input("\n⏸  Press Enter to continue...")
+    time.sleep(2)  # Brief pause instead of waiting for input
     
     # Demo 4: Deeper analysis
     print_header("Demo 4: Deep Dependency Analysis")

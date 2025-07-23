@@ -156,6 +156,28 @@ cd pydeptree
 pip install -e .
 ```
 
+## 🎬 Try the Interactive Demos
+
+PyDepTree includes self-contained demo scripts that work regardless of how you installed it:
+
+```bash
+# Run all demos (basic → enhanced → advanced)
+python demo_run_all.py
+
+# Or run individual demos
+python demo_basic.py      # Core dependency analysis features
+python demo_enhanced.py   # File types, statistics, lint checking  
+python demo_advanced.py   # Search, complexity, TODOs, and more
+```
+
+**Perfect for:**
+- 🚀 **New users**: See all features in action with realistic examples
+- 📚 **Learning**: Understand what each CLI version offers
+- 🧪 **Testing**: Verify installation works correctly
+- 🎯 **Evaluation**: Decide which features you need
+
+Each demo creates temporary sample projects, so they work with pip, pipx, or source installations.
+
 ## Usage
 
 ### Basic Usage
