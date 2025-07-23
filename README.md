@@ -122,13 +122,6 @@ pipx ensurepath
 source ~/.zshrc  # or restart your terminal
 ```
 
-**macOS:** (via brew)
-
-```bash
-# Option 2: Using Homebrew (directly)
-brew install pydeptree
-```
-
 **Windows:**
 
 ```bash

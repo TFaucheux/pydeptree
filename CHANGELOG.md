@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.7] - 2025-01-23
+
+### Fixed
+- **Installation Documentation**: Removed incorrect Homebrew installation instructions
+  - Removed misleading `brew install pydeptree` command that doesn't work
+  - Clarified that pipx is the recommended installation method for CLI tools
+
 ## [0.3.6] - 2025-01-23
 
 ### Enhanced
