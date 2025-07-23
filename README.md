@@ -157,11 +157,25 @@ unzip demos.zip
 
 The demos package includes:
 
-- **demo_basic.py** - Demonstrates basic dependency tree visualization
-- **demo_enhanced.py** - Shows enhanced features with file metrics and lint checking
-- **demo_advanced.py** - Showcases all advanced features including search, git integration, and complexity analysis
-- **demo_run_all.py** - Runs all demos sequentially for a complete overview
+- **demos/** - Directory containing all demo scripts:
+  - **demo_basic.py** - Demonstrates basic dependency tree visualization
+  - **demo_enhanced.py** - Shows enhanced features with file metrics and lint checking
+  - **demo_advanced.py** - Showcases all advanced features including search, git integration, and complexity analysis
+  - **demo_run_all.py** - Runs all demos sequentially for a complete overview
 - **sample_project/** - A realistic Python project with intentional code issues for demonstration
+
+After extracting, run the demos:
+```bash
+cd demos
+python demo_basic.py
+python demo_enhanced.py
+python demo_advanced.py
+python demo_run_all.py
+
+# Or analyze the sample project
+cd ..
+pydeptree sample_project/main.py
+```
 
 Then install PyDepTree:
 ```bash
@@ -180,12 +194,12 @@ pip install -e .
 
 ```bash
 # Run all demos (basic → enhanced → advanced)
-python demo_run_all.py
+python demos/demo_run_all.py
 
 # Or run individual demos
-python demo_basic.py      # Core dependency analysis features
-python demo_enhanced.py   # File types, statistics, lint checking  
-python demo_advanced.py   # Search, complexity, TODOs, and more
+python demos/demo_basic.py      # Core dependency analysis features
+python demos/demo_enhanced.py   # File types, statistics, lint checking  
+python demos/demo_advanced.py   # Search, complexity, TODOs, and more
 ```
 
 **Perfect for:**

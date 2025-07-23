@@ -9,12 +9,16 @@ __pycache__/
 # CLAUDE.md
 CLAUDE.md
 generate_output.py
+capture_output.py
 create_animated_demo.py
 
 # docs
 docs/*.html
 docs/*.md
 docs/*.txt
+docs/*.svg
+
+MANIFEST.in
 
 # Distribution / packaging
 .Python
