@@ -229,12 +229,26 @@ def get_git_status(file_path: Path, project_root: Path) -> Optional[str]:
 def run_ruff_check(file_path: Path) -> Tuple[int, int]:
     """Run ruff linter on a file and return error/warning counts"""
     try:
-        result = subprocess.run(
-            ['ruff', 'check', str(file_path), '--output-format=json'],
-            capture_output=True,
-            text=True,
-            timeout=5
-        )
+        # Try to find ruff in the same Python environment
+        import shutil
+        ruff_cmd = shutil.which('ruff')
+        
+        # If ruff not found in PATH, try to run it as a module
+        if not ruff_cmd:
+            # Try running ruff as a module from the same Python interpreter
+            result = subprocess.run(
+                [sys.executable, '-m', 'ruff', 'check', str(file_path), '--output-format=json'],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+        else:
+            result = subprocess.run(
+                [ruff_cmd, 'check', str(file_path), '--output-format=json'],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
         
         if result.stdout:
             import json
