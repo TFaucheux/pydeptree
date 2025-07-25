@@ -874,6 +874,32 @@ def display_package_dependency_tree(package_tree: Dict[str, Dict], console: Cons
     """Display package dependency tree in johnnydep style"""
     console.print("\n[bold]Package Dependency Analysis:[/bold]")
     
+    # Check if all packages are not installed and warn about virtual environment
+    def check_all_packages_not_installed(tree: Dict) -> bool:
+        """Check if all packages in the tree are not installed"""
+        has_packages = False
+        all_not_installed = True
+        
+        def check_packages(pkg_tree: Dict):
+            nonlocal has_packages, all_not_installed
+            for pkg_name, pkg_data in pkg_tree.items():
+                has_packages = True
+                version = pkg_data.get('version')
+                if version and version != 'unknown':
+                    all_not_installed = False
+                # Recursively check dependencies
+                if 'dependencies' in pkg_data:
+                    check_packages(pkg_data['dependencies'])
+        
+        check_packages(tree)
+        return has_packages and all_not_installed
+    
+    if check_all_packages_not_installed(package_tree):
+        console.print("\n[bold yellow]⚠️  Warning: All dependencies show as 'not installed'[/bold yellow]")
+        console.print("[dim]This usually means the virtual environment is not activated.[/dim]")
+        console.print("[dim]Try running: [bold]source <venv>/bin/activate[/bold] (Linux/Mac) or [bold]<venv>\\Scripts\\activate[/bold] (Windows)[/dim]")
+        console.print()
+    
     # Create a summary table first
     summary_table = Table(show_header=True, header_style="bold cyan", box=None)
     summary_table.add_column("Package", style="cyan")
