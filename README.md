@@ -37,10 +37,13 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 | Dependency Tree | ✅ | ✅ | ✅ |
 | Configurable Depth | ✅ | ✅ | ✅ |
 | Import Preview | ✅ | ✅ | ✅ |
+| **Directory Input** | ✅ | ✅ | ✅ |
 | Flexible Import Display | ❌ | ❌ | ✅ (inline/below/both) |
 | File Type Colors | ❌ | ✅ | ✅ (+ Config) |
 | File Metrics | ❌ | ✅ | ✅ |
 | Lint Checking | ❌ | ✅ | ✅ |
+| **Detailed Lint Reports** | ❌ | ❌ | ✅ (errors/warnings) |
+| **Lint Rule Statistics** | ❌ | ❌ | ✅ |
 | Summary Tables | ❌ | ✅ | ✅ |
 | Search/Grep | ❌ | ❌ | ✅ |
 | Complexity Analysis | ❌ | ❌ | ✅ |
@@ -94,6 +97,9 @@ A powerful Python dependency analyzer that visualizes module dependencies in you
 - 🔄 **Git Integration**: Shows file modification status in version control
 - 📄 **Requirements Generation**: Automatically generate requirements.txt from detected dependencies
 - ⚙️ **Config File Detection** (v0.3.12+): Automatically detects and categorizes Python configuration files
+- 📁 **Directory Input Support** (v0.3.19+): Analyze entire projects by passing a directory path
+- 🔍 **Detailed Lint Reporting** (v0.3.19+): Show specific lint errors and warnings with file locations
+- 📊 **Lint Rule Statistics** (v0.3.19+): Comprehensive statistics table showing lint issues by rule type
 
 ## Installation
 
@@ -223,25 +229,33 @@ Analyze a Python file and see its direct dependencies:
 pydeptree myapp.py
 ```
 
+Or analyze an entire project by passing a directory:
+
+```bash
+pydeptree sample_project --depth 2
+```
+
 ### Enhanced Usage
 
 Use the enhanced CLI for additional features:
 
 ```bash
 pydeptree-enhanced myapp.py --depth 2
+pydeptree-enhanced sample_project --depth 2  # Directory input
 ```
 
 The enhanced version provides color-coded file types, lint checking, and detailed statistics.
 
-### Advanced Usage (v0.3.0+)
+### Advanced Usage (v0.3.19+)
 
-Use the advanced CLI for search, complexity analysis, and more:
+Use the advanced CLI for search, complexity analysis, and comprehensive lint reporting:
 
 ```bash
 pydeptree-advanced myapp.py --search "APIClient" --search-type class
+pydeptree-advanced sample_project --depth 2  # Analyze entire project
 ```
 
-The advanced version includes all enhanced features plus search capabilities, complexity metrics, TODO detection, and git integration.
+The advanced version includes all enhanced features plus search capabilities, complexity metrics, TODO detection, git integration, detailed lint reporting, and lint rule statistics.
 
 ### Advanced Options
 
@@ -281,6 +295,9 @@ pydeptree-enhanced myapp.py --show-code --depth 3
 
 ### Advanced Features Examples
 ```bash
+# Analyze entire project directory
+pydeptree-advanced sample_project --depth 2
+
 # Search for a specific class
 pydeptree-advanced myapp.py --search "UserModel" --search-type class
 
@@ -289,6 +306,12 @@ pydeptree-advanced myapp.py --search "validate" --search-type function --depth 3
 
 # Find all TODO comments
 pydeptree-advanced myapp.py --search "TODO|FIXME|HACK" --depth 2
+
+# Show detailed lint errors and warnings with file locations
+pydeptree-advanced sample_project --show-errors --show-warnings
+
+# Disable lint rule statistics (enabled by default)
+pydeptree-advanced sample_project --no-show-lint-stats
 
 # Minimal output with just file structure
 pydeptree-advanced myapp.py --no-show-metrics --no-check-lint --no-show-stats
@@ -400,9 +423,9 @@ This allows you to see how PyDepTree Enhanced detects and reports these issues w
 ## Command Line Options
 
 ### Basic CLI (`pydeptree`)
-- `FILE_PATH`: Path to the Python file to analyze (required)
+- `FILE_OR_DIRECTORY`: Path to the Python file or directory to analyze (required)
 - `-d, --depth INTEGER`: Maximum depth to traverse (default: 1)
-- `-r, --project-root PATH`: Project root directory (default: file's parent)
+- `-r, --project-root PATH`: Project root directory (default: file's parent or input directory)
 - `-c, --show-code`: Display import statements from each file
 - `--help`: Show help message and exit
 
@@ -422,6 +445,9 @@ All enhanced options plus:
 - `--show-todos / --no-show-todos`: Show/hide TODO comments (default: enabled)
 - `--check-git / --no-check-git`: Show/hide git status (default: enabled)
 - `--show-metrics / --no-show-metrics`: Show/hide inline metrics like size, complexity (default: enabled)
+- `--show-errors`: Show detailed lint errors with file names and line numbers
+- `--show-warnings`: Show detailed lint warnings with file names and line numbers
+- `--show-lint-stats / --no-show-lint-stats`: Show/hide lint rule statistics summary (default: enabled)
 - `-R, --generate-requirements`: Generate requirements.txt from detected dependencies
 - `-o, --requirements-output PATH`: Output path for requirements.txt (default: auto-generated)
 - `--no-versions`: Generate requirements.txt without version numbers
@@ -467,6 +493,96 @@ PyDepTree automatically categorizes Python files by analyzing their paths and na
 - **🚀 Main**: Files named 'main.py' or '__main__.py'
 - **⚙️ Config**: Files like 'config.py', 'settings.py', 'env.py', or in `/config/` directories
 - **📄 Other**: Files that don't match the above patterns
+
+### Directory Input Support (v0.3.19+)
+PyDepTree can analyze entire projects by accepting directory paths:
+
+```bash
+# Automatically finds entry point (main.py, app.py, etc.)
+pydeptree-advanced sample_project --depth 2
+
+# Entry point detection priority:
+# 1. main.py
+# 2. __main__.py  
+# 3. app.py
+# 4. run.py
+# 5. start.py
+# 6. index.py
+# 7. __init__.py
+# 8. First Python file found
+```
+
+When analyzing directories, PyDepTree automatically:
+- Finds the most appropriate entry point file
+- Sets the project root to the input directory
+- Shows which entry point was selected
+- Handles error cases gracefully (no Python files found)
+
+### Advanced Lint Analysis (v0.3.19+)
+PyDepTree now provides comprehensive lint analysis powered by ruff:
+
+#### Lint Rule Statistics
+Get project-wide statistics showing all lint issues by rule type:
+
+```bash
+pydeptree-advanced sample_project --show-lint-stats  # Default: enabled
+```
+
+Example output:
+```
+                           Lint Issues by Rule                           
+╭──────────┬──────────────┬──────────┬──────────────────────────────────╮
+│    Count │ Rule         │ Fixable  │ Description                      │
+├──────────┼──────────────┼──────────┼──────────────────────────────────┤
+│       35 │ W293         │    ✓     │ blank-line-with-whitespace       │
+│       10 │ W292         │    ✓     │ missing-newline-at-end-of-file   │
+│        6 │ I001         │    ✓     │ unsorted-imports                 │
+│        5 │ B904         │    ✗     │ raise-without-from-inside-except │
+╰──────────┴──────────────┴──────────┴──────────────────────────────────╯
+
+Total issues: 67
+```
+
+#### Detailed Error and Warning Reports
+Show specific lint issues with exact file locations:
+
+```bash
+# Show detailed errors with file:line:column locations
+pydeptree-advanced sample_project --show-errors
+
+# Show detailed warnings with file:line:column locations  
+pydeptree-advanced sample_project --show-warnings
+
+# Show both errors and warnings
+pydeptree-advanced sample_project --show-errors --show-warnings
+```
+
+Example output:
+```
+Detailed Lint Errors:
+  • sample_project/validators.py:25:13 - E722: bare-except
+  • sample_project/http.py:45:1 - E501: line-too-long
+  
+  Total: 3 errors
+
+Detailed Lint Warnings:  
+  • sample_project/main.py:5:1 - W293: blank-line-with-whitespace
+  • sample_project/api.py:22:1 - I001: unsorted-imports
+  
+  Total: 31 warnings
+```
+
+#### Lint Control Options
+```bash
+# Disable lint rule statistics (keep file-level lint summary)
+pydeptree-advanced sample_project --no-show-lint-stats
+
+# Disable all lint checking
+pydeptree-advanced sample_project --no-check-lint
+
+# Show only detailed errors/warnings (no statistics table)
+pydeptree-advanced sample_project --show-errors --no-show-lint-stats
+```
 
 ## Requirements Generation
 

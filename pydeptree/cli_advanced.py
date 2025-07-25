@@ -8,7 +8,7 @@ import sys
 import subprocess
 import re
 from pathlib import Path
-from typing import Set, Dict, List, Optional, Tuple, Any
+from typing import Set, Dict, List, Optional, Tuple, Any, Union
 from dataclasses import dataclass, field
 import time
 from datetime import datetime
@@ -20,6 +20,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
+from rich import box
 from rich import print as rprint
 from rich.text import Text
 from rich.highlighter import RegexHighlighter
@@ -56,6 +57,8 @@ class FileInfo:
     todos: List[Tuple[int, str]] = field(default_factory=list)  # Line number and TODO text
     git_status: Optional[str] = None  # Git status (M, A, D, etc.)
     search_matches: List[Tuple[int, str]] = field(default_factory=list)  # Search results
+    lint_error_details: List[dict] = field(default_factory=list)  # Detailed lint errors
+    lint_warning_details: List[dict] = field(default_factory=list)  # Detailed lint warnings
 
 
 def detect_file_type(file_path: Path) -> str:
@@ -243,8 +246,8 @@ def get_git_status(file_path: Path, project_root: Path) -> Optional[str]:
     return None
 
 
-def run_ruff_check(file_path: Path) -> Tuple[int, int]:
-    """Run ruff linter on a file and return error/warning counts"""
+def run_ruff_check(file_path: Path, detailed: bool = False) -> Union[Tuple[int, int], Tuple[int, int, List[dict], List[dict]]]:
+    """Run ruff linter on a file and return error/warning counts and optionally detailed issues"""
     try:
         # Try to find ruff in the same Python environment
         import shutil
@@ -271,20 +274,30 @@ def run_ruff_check(file_path: Path) -> Tuple[int, int]:
             import json
             issues = json.loads(result.stdout)
             # Ruff codes: E = pycodestyle errors, W = pycodestyle warnings, F = pyflakes, etc.
-            errors = sum(1 for issue in issues if issue.get('code', '').startswith('E'))
-            warnings = sum(1 for issue in issues if issue.get('code', '').startswith('W'))
-            # All other codes (F, I, B, etc.) are treated as warnings
-            other_issues = len(issues) - errors - warnings
-            warnings += other_issues
-            return errors, warnings
+            errors = []
+            warnings = []
+            
+            for issue in issues:
+                code = issue.get('code', '')
+                if code.startswith('E'):
+                    errors.append(issue)
+                else:
+                    warnings.append(issue)
+            
+            if detailed:
+                return len(errors), len(warnings), errors, warnings
+            else:
+                return len(errors), len(warnings)
     except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
         pass
     
+    if detailed:
+        return 0, 0, [], []
     return 0, 0
 
 
 def analyze_file(file_path: Path, project_root: Path, search_pattern: Optional[str] = None, 
-                search_type: str = 'text', check_git: bool = True) -> FileInfo:
+                search_type: str = 'text', check_git: bool = True, collect_lint_details: bool = False) -> FileInfo:
     """Analyze a Python file and return file information"""
     try:
         stat = file_path.stat()
@@ -321,7 +334,12 @@ def analyze_file(file_path: Path, project_root: Path, search_pattern: Optional[s
             git_status = get_git_status(file_path, project_root)
             
         # Run linter
-        errors, warnings = run_ruff_check(file_path)
+        error_details = []
+        warning_details = []
+        if collect_lint_details:
+            errors, warnings, error_details, warning_details = run_ruff_check(file_path, detailed=True)
+        else:
+            errors, warnings = run_ruff_check(file_path)
         
         return FileInfo(
             path=file_path,
@@ -336,7 +354,9 @@ def analyze_file(file_path: Path, project_root: Path, search_pattern: Optional[s
             classes=classes,
             todos=todos,
             git_status=git_status,
-            search_matches=search_matches
+            search_matches=search_matches,
+            lint_error_details=error_details,
+            lint_warning_details=warning_details
         )
     except Exception as e:
         # Return minimal info on error
@@ -925,14 +945,15 @@ def display_package_dependency_tree(package_tree: Dict[str, Dict], console: Cons
 def build_dependency_tree(file_path: Path, project_root: Path, depth: int, 
                          check_lint: bool = True, search_pattern: Optional[str] = None,
                          search_type: str = 'text', check_git: bool = True,
-                         show_metrics: bool = True, show_imports_inline: bool = False) -> Tuple[Tree, Dict[str, FileInfo], int]:
+                         show_metrics: bool = True, show_imports_inline: bool = False,
+                         collect_lint_details: bool = False) -> Tuple[Tree, Dict[str, FileInfo], int]:
     """Build a dependency tree for a Python file"""
     seen = set()
     file_stats = {}
     total_files = 0
     
     # Analyze root file
-    root_info = analyze_file(file_path, project_root, search_pattern, search_type, check_git)
+    root_info = analyze_file(file_path, project_root, search_pattern, search_type, check_git, collect_lint_details)
     file_stats[str(file_path)] = root_info
     
     root_label = format_file_label(root_info, project_root, show_metrics)
@@ -966,7 +987,7 @@ def build_dependency_tree(file_path: Path, project_root: Path, depth: int,
                     ) as progress:
                         task = progress.add_task(f"Analyzing {potential_path.name}...", total=1)
                         file_info = analyze_file(potential_path, project_root, 
-                                               search_pattern, search_type, check_git)
+                                               search_pattern, search_type, check_git, collect_lint_details)
                         progress.advance(task)
                     
                     file_stats[str(potential_path)] = file_info
@@ -1230,8 +1251,183 @@ def display_todos_summary(file_stats: Dict[str, FileInfo]):
                 console.print(f"  ... and {len(todos) - 5} more")
 
 
+def display_detailed_lint_issues(file_stats: Dict[str, FileInfo], show_errors: bool, show_warnings: bool):
+    """Display detailed lint errors and warnings with file names and line numbers"""
+    if show_errors:
+        console.print("\n[bold red]Detailed Lint Errors:[/bold red]")
+        error_count = 0
+        for file_path, file_info in file_stats.items():
+            if file_info.lint_error_details:
+                for error in file_info.lint_error_details:
+                    location = error.get('location', {})
+                    console.print(f"  • {file_info.path}:{location.get('row', '?')}:{location.get('column', '?')} - "
+                                f"[red]{error.get('code', 'UNKNOWN')}[/red]: {error.get('message', 'No message')}")
+                    error_count += 1
+        
+        if error_count == 0:
+            console.print("  [green]No errors found![/green]")
+        else:
+            console.print(f"\n  [red]Total: {error_count} error{'s' if error_count != 1 else ''}[/red]")
+    
+    if show_warnings:
+        console.print("\n[bold yellow]Detailed Lint Warnings:[/bold yellow]")
+        warning_count = 0
+        for file_path, file_info in file_stats.items():
+            if file_info.lint_warning_details:
+                for warning in file_info.lint_warning_details:
+                    location = warning.get('location', {})
+                    console.print(f"  • {file_info.path}:{location.get('row', '?')}:{location.get('column', '?')} - "
+                                f"[yellow]{warning.get('code', 'UNKNOWN')}[/yellow]: {warning.get('message', 'No message')}")
+                    warning_count += 1
+        
+        if warning_count == 0:
+            console.print("  [green]No warnings found![/green]")
+        else:
+            console.print(f"\n  [yellow]Total: {warning_count} warning{'s' if warning_count != 1 else ''}[/yellow]")
+
+
+def run_ruff_statistics(project_root: Path) -> Optional[str]:
+    """Run ruff with --statistics flag on the entire project"""
+    try:
+        import shutil
+        ruff_cmd = shutil.which('ruff')
+        
+        # Get the absolute path
+        project_path = project_root.resolve()
+        
+        if not ruff_cmd:
+            result = subprocess.run(
+                [sys.executable, '-m', 'ruff', 'check', '.', '--statistics', '--output-format=json'],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=str(project_path)
+            )
+        else:
+            result = subprocess.run(
+                [ruff_cmd, 'check', '.', '--statistics', '--output-format=json'],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=str(project_path)
+            )
+        
+        # Debug: print both stderr and stdout
+        # print(f"DEBUG - Return code: {result.returncode}")
+        # print(f"DEBUG - STDERR length: {len(result.stderr) if result.stderr else 0}")
+        # print(f"DEBUG - STDOUT length: {len(result.stdout) if result.stdout else 0}")
+        # if result.stdout:
+        #     print(f"DEBUG - STDOUT: {result.stdout[:100]}...")
+        
+        # Statistics are output to stderr in ruff
+        # Combine stderr and stdout as statistics might be in either
+        output = ""
+        if result.stderr:
+            output += result.stderr
+        if result.stdout:
+            output += "\n" + result.stdout
+        
+        if output.strip():
+            return output.strip()
+    except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
+        pass
+    
+    return None
+
+
+def find_entry_point_file(directory: Path) -> Optional[Path]:
+    """Find a suitable entry point file in a directory"""
+    # Common entry point file patterns in order of preference
+    entry_patterns = [
+        'main.py',
+        '__main__.py', 
+        'app.py',
+        'run.py',
+        'start.py',
+        'index.py',
+        '__init__.py'
+    ]
+    
+    # First, look for common entry point files
+    for pattern in entry_patterns:
+        entry_file = directory / pattern
+        if entry_file.exists() and entry_file.is_file():
+            return entry_file
+    
+    # If no common entry points found, find the first Python file
+    python_files = list(directory.glob('*.py'))
+    if python_files:
+        # Sort to get consistent results
+        return sorted(python_files)[0]
+    
+    # Look in subdirectories for Python files
+    for subdir in directory.iterdir():
+        if subdir.is_dir() and not subdir.name.startswith('.'):
+            python_files = list(subdir.glob('*.py'))
+            if python_files:
+                return sorted(python_files)[0]
+    
+    return None
+
+
+def display_lint_statistics(project_root: Path):
+    """Display lint statistics for the entire project"""
+    console.print("\n[bold]Lint Rule Statistics:[/bold]")
+    
+    statistics = run_ruff_statistics(project_root)
+    if statistics:
+        # console.print(f"[dim]Debug raw output length: {len(statistics)} chars[/dim]")
+        # console.print(f"[dim]Debug raw output: {statistics[:300]}...[/dim]")
+        try:
+            # Extract JSON from stderr (skip warning lines)
+            lines = statistics.strip().split('\n')
+            json_start = -1
+            for i, line in enumerate(lines):
+                if line.strip().startswith('['):
+                    json_start = i
+                    break
+            
+            if json_start >= 0:
+                json_content = '\n'.join(lines[json_start:])
+                # console.print(f"[dim]Debug JSON: {json_content[:100]}...[/dim]")
+                import json
+                stats_data = json.loads(json_content)
+                
+                # Create a table for statistics
+                stats_table = Table(title="Lint Issues by Rule", box=box.ROUNDED)
+                stats_table.add_column("Count", style="cyan", justify="right", width=8)
+                stats_table.add_column("Rule", style="yellow", width=12)
+                stats_table.add_column("Fixable", style="green", justify="center", width=8)
+                stats_table.add_column("Description", style="white")
+                
+                total_issues = 0
+                for stat in stats_data:
+                    count = stat.get('count', 0)
+                    rule = stat.get('code', '')
+                    name = stat.get('name', '')
+                    fixable = stat.get('fixable', False)
+                    
+                    stats_table.add_row(
+                        str(count), 
+                        rule, 
+                        "✓" if fixable else "✗", 
+                        name
+                    )
+                    total_issues += count
+                
+                console.print(stats_table)
+                console.print(f"\n[bold]Total issues: {total_issues}[/bold]")
+            else:
+                console.print("  [green]No lint issues found in the project![/green]")
+        except (json.JSONDecodeError, Exception):
+            console.print("  [yellow]Unable to parse lint statistics[/yellow]")
+    else:
+        console.print("  [yellow]Unable to retrieve lint statistics[/yellow]")
+
+
 @click.command()
-@click.argument('file_path', type=click.Path(exists=True, path_type=Path))
+@click.argument('file_path', type=click.Path(exists=True, path_type=Path), 
+                metavar='FILE_OR_DIRECTORY')
 @click.option('-d', '--depth', default=2, help='Maximum depth to traverse')
 @click.option('-r', '--project-root', type=click.Path(exists=True, path_type=Path), 
               help='Project root directory (defaults to file\'s parent)')
@@ -1256,6 +1452,12 @@ def display_todos_summary(file_stats: Dict[str, FileInfo]):
               help='Generate requirements.txt from detected dependencies')
 @click.option('--requirements-output', '-o', type=click.Path(path_type=Path),
               help='Output path for requirements.txt (default: auto-generated)')
+@click.option('--show-errors', is_flag=True,
+              help='Show detailed lint errors with file names and line numbers')
+@click.option('--show-warnings', is_flag=True,
+              help='Show detailed lint warnings with file names and line numbers')
+@click.option('--show-lint-stats/--no-show-lint-stats', default=True,
+              help='Show/hide lint rule statistics summary (enabled by default)')
 @click.option('--no-versions', is_flag=True,
               help='Generate requirements.txt without version numbers')
 @click.option('--no-interactive', is_flag=True,
@@ -1268,15 +1470,33 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code_par
         check_lint: bool, show_stats: bool, search: Optional[str], search_type: str,
         show_todos: bool, check_git: bool, show_metrics: bool,
         generate_requirements: bool, requirements_output: Optional[Path], no_versions: bool,
-        no_interactive: bool, analyze_deps: bool, dep_depth: int):
-    """Advanced Python Dependency Tree Analyzer with search, complexity, and more"""
+        no_interactive: bool, analyze_deps: bool, dep_depth: int, show_errors: bool, show_warnings: bool, show_lint_stats: bool):
+    """Advanced Python Dependency Tree Analyzer with search, complexity, and more
+    
+    Analyzes Python dependencies starting from a file or directory. When a directory
+    is provided, automatically finds an appropriate entry point (main.py, app.py, etc.)."""
     
     # Map parameter to show_code for consistency
     show_code = show_code_param
     
-    # Set project root
-    if project_root is None:
-        project_root = file_path.parent
+    # Handle directory input - find entry point file
+    original_input = file_path
+    if file_path.is_dir():
+        entry_file = find_entry_point_file(file_path)
+        if entry_file is None:
+            console.print("[red]Error: No Python files found in the specified directory.[/red]")
+            raise click.Abort()
+        
+        # Set project root to the input directory if not specified
+        if project_root is None:
+            project_root = file_path
+        
+        file_path = entry_file
+        console.print(f"[dim]Found entry point: {entry_file.name} in {original_input}[/dim]")
+    else:
+        # Set project root for file input
+        if project_root is None:
+            project_root = file_path.parent
     
     # Display header
     header = Panel(
@@ -1325,7 +1545,8 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code_par
         tree, file_stats, total_files = build_dependency_tree(
             file_path, project_root, depth, check_lint, 
             search, search_type, check_git, show_metrics, 
-            show_imports_inline=(show_code in ['inline', 'both'])
+            show_imports_inline=(show_code in ['inline', 'both']),
+            collect_lint_details=(show_errors or show_warnings)
         )
         progress.update(task, completed=True)
     
@@ -1346,6 +1567,14 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code_par
     # Display lint summary
     if check_lint:
         display_lint_summary(file_stats)
+    
+    # Display detailed lint issues if requested
+    if (show_errors or show_warnings) and check_lint:
+        display_detailed_lint_issues(file_stats, show_errors, show_warnings)
+    
+    # Display lint statistics if requested
+    if show_lint_stats and check_lint:
+        display_lint_statistics(project_root)
     
     # Display TODOs summary
     if show_todos and not search:
