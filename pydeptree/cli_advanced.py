@@ -1453,7 +1453,8 @@ def cli(file_path: Path, depth: int, project_root: Optional[Path], show_code_par
                     for line in preview_lines:
                         console.print(f"  {line}")
                     if len(content.split('\n')) > 10:
-                        console.print(f"  ... and {len(content.split('\n')) - 10} more lines")
+                        remaining_lines = len(content.split('\n')) - 10
+                        console.print(f"  ... and {remaining_lines} more lines")
         else:
             console.print("\n[yellow]No external dependencies found.[/yellow]")
             console.print("All imports appear to be from the standard library or internal modules.")
