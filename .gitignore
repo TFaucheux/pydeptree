@@ -19,6 +19,7 @@ docs/*.txt
 docs/*.svg
 
 MANIFEST.in
+uv.lock
 
 # Distribution / packaging
 .Python
